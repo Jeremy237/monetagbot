@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://whephiwums.com/sdk.js" data-zone="9286285" data-sdk="show_9286285"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      text-align: center;
+      background: #1f1f1f;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      width: 300px;
+    }
+    .container h1 {
+      font-size: 20px;
+      color: green;
+      margin-bottom: 10px;
+    }
+    .watch-button, .open-browser-button {
+      width: 90%;
+      padding: 10px;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      background: green;
+      cursor: pointer;
+    }
+    .watch-button:hover, .open-browser-button:hover {
+      background: darkorange;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Auto MoneTag Ads</h1>
+
+    <button class="watch-button" onclick="showRewardedAd()">Watch Ads</button>
+    <button class="open-browser-button" onclick="openInBrowser()">Open in Browser</button>
+  </div>
+
+  <script>
+    function showRewardedAd() {
+      if (typeof show_9286285 === "function") {
+        show_9286285().then(() => {
+          alert('✅ You have seen an ad!');
+          // Add your reward logic here
+        }).catch((error) => {
+          console.error('❌ Ad failed to show:', error);
+          alert('❌ Ad could not be shown at this time.');
+        });
+      } else {
+        alert("🚫 The ad function is not available. Please open in a proper browser.");
+      }
+    }
+
+    function openInBrowser() {
+      window.open(location.href, "_blank");
+    }
+
+    // Debug: Check if SDK is loaded
+    setTimeout(() => {
+      if (typeof show_9286285 !== "function") {
+        alert("⚠️ The ad SDK didn't load properly.");
+      } else {
+        console.log("✅ SDK loaded successfully.");
+      }
+    }, 2000);
+  </script>
+</body>
+</html>
