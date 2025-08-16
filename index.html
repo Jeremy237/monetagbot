@@ -1,82 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="https://whephiwums.com/sdk.js" data-zone="9286285" data-sdk="show_9286285"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reward Task</title>
+
+  <!-- Your ad script -->
+  <script src='//niphaumeenses.net/vignette.min.js' data-zone='9286285' data-sdk='show_9286285'></script>
+
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      background-color: #121212;
-      color: #fff;
-      font-family: Arial, sans-serif;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      height: 100vh;
-    }
-    .container {
-      text-align: center;
-      background: #1f1f1f;
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #808080;
+      color: #ffd700;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      width: 300px;
+      box-sizing: border-box;
     }
-    .container h1 {
-      font-size: 20px;
-      color: green;
-      margin-bottom: 10px;
-    }
-    .watch-button, .open-browser-button {
+    .ad-container {
+      text-align: center;
+      padding: 30px;
+      background: #333;
+      border: 2px solid #ffd700;
+      border-radius: 15px;
       width: 90%;
-      padding: 10px;
-      font-size: 14px;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      background: green;
-      cursor: pointer;
+      max-width: 400px;
+      color: #ffd700;
+      margin: auto;
+      box-sizing: border-box;
     }
-    .watch-button:hover, .open-browser-button:hover {
-      background: darkorange;
+    .ad-container h1 {
+      margin-bottom: 10px;
+      font-size: 1.6rem;
+    }
+    .reward-button {
+      padding: 15px 30px;
+      font-size: 18px;
+      cursor: pointer;
+      color: #1a1a1a;
+      background-color: #fff;
+      border: none;
+      border-radius: 8px;
+      transition: background 0.3s, transform 0.3s;
+      box-shadow: 0px 5px 15px rgba(255, 215, 0, 0.4);
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .reward-button:hover {
+      background-color: #e5c100;
+      transform: scale(1.05);
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Auto MoneTag Ads</h1>
-
-    <button class="watch-button" onclick="showRewardedAd()">Watch Ads</button>
-    <button class="open-browser-button" onclick="openInBrowser()">Open in Browser</button>
+  <div class="ad-container">
+    <h1>Complete Reward Task</h1>
+    <button class="reward-button" onclick="showRewardedAd()">Reward Task</button>
   </div>
 
   <script>
     function showRewardedAd() {
-      if (typeof show_9286285 === "function") {
+      if (typeof show_9286285 === 'function') {
         show_9286285().then(() => {
-          alert('✅ You have seen an ad!');
-          // Add your reward logic here
-        }).catch((error) => {
-          console.error('❌ Ad failed to show:', error);
-          alert('❌ Ad could not be shown at this time.');
+          alert('You have seen an ad!');
+          // Place your reward logic here (e.g., increase points/balance)
+        }).catch(error => {
+          alert('Failed to show rewarded ad.');
+          console.error('Ad error:', error);
         });
       } else {
-        alert("🚫 The ad function is not available. Please open in a proper browser.");
+        alert('Rewarded ad not available.');
       }
     }
-
-    function openInBrowser() {
-      window.open(location.href, "_blank");
-    }
-
-    // Debug: Check if SDK is loaded
-    setTimeout(() => {
-      if (typeof show_9286285 !== "function") {
-        alert("⚠️ The ad SDK didn't load properly.");
-      } else {
-        console.log("✅ SDK loaded successfully.");
-      }
-    }, 2000);
   </script>
 </body>
 </html>
