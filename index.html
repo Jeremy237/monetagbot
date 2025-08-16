@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reward Task</title>
+  <title>Reward Ads</title>
 
   <!-- Your ad script -->
   <script src='//niphaumeenses.net/vignette.min.js' data-zone='9286285' data-sdk='show_9286285'></script>
@@ -34,7 +34,7 @@
       box-sizing: border-box;
     }
     .ad-container h1 {
-      margin-bottom: 10px;
+      margin-bottom: 20px;
       font-size: 1.6rem;
     }
     .reward-button {
@@ -48,32 +48,63 @@
       transition: background 0.3s, transform 0.3s;
       box-shadow: 0px 5px 15px rgba(255, 215, 0, 0.4);
       font-weight: bold;
-      margin-top: 10px;
+      margin: 10px 0;
+      width: 100%;
     }
     .reward-button:hover {
       background-color: #e5c100;
       transform: scale(1.05);
     }
+    .counter {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
   </style>
 </head>
 <body>
   <div class="ad-container">
-    <h1>Complete Reward Task</h1>
-    <button class="reward-button" onclick="showRewardedAd()">Reward Task</button>
+    <h1>Complete Reward Tasks</h1>
+
+    <button class="reward-button" onclick="showInterstitialAd()">Rewarded Interstitial</button>
+    <button class="reward-button" onclick="showPopupAd()">Rewarded Popup</button>
+
+    <div class="counter">
+      Interstitial Ads Watched: <span id="interstitialCount">0</span><br>
+      Popup Ads Watched: <span id="popupCount">0</span>
+    </div>
   </div>
 
   <script>
-    function showRewardedAd() {
+    let interstitialCount = 0;
+    let popupCount = 0;
+
+    function showInterstitialAd() {
       if (typeof show_9286285 === 'function') {
         show_9286285().then(() => {
-          alert('You have seen an ad!');
-          // Place your reward logic here (e.g., increase points/balance)
+          interstitialCount++;
+          document.getElementById('interstitialCount').textContent = interstitialCount;
+          alert('You watched a Rewarded Interstitial ad!');
         }).catch(error => {
-          alert('Failed to show rewarded ad.');
+          alert('Failed to show interstitial ad.');
           console.error('Ad error:', error);
         });
       } else {
-        alert('Rewarded ad not available.');
+        alert('Interstitial ad not available.');
+      }
+    }
+
+    function showPopupAd() {
+      if (typeof show_9286285 === 'function') {
+        show_9286285('pop').then(() => {
+          popupCount++;
+          document.getElementById('popupCount').textContent = popupCount;
+          alert('You watched a Rewarded Popup ad!');
+        }).catch(error => {
+          alert('Failed to show popup ad.');
+          console.error('Ad error:', error);
+        });
+      } else {
+        alert('Popup ad not available.');
       }
     }
   </script>
