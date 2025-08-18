@@ -71,8 +71,6 @@
     <h1>Complete Reward Tasks</h1>
 
     <button class="reward-button" id="interstitialBtn" onclick="showInterstitialAd()">Rewarded Interstitial</button>
-    <button class="reward-button" onclick="startAutoAds()">Start Auto Ads</button>
-    <button class="reward-button" onclick="stopAutoAds()">Stop Auto Ads</button>
 
     <div class="counter">
       Interstitial Ads Watched: <span id="interstitialCount">0</span><br>
@@ -82,7 +80,6 @@
 
   <script>
     let interstitialCount = 0;
-    let autoAdsInterval = null;
     let cooldownTimeout = null;
     let cooldownSeconds = 0;
 
@@ -91,7 +88,7 @@
         show_9734242().then(() => {
           interstitialCount++;
           document.getElementById('interstitialCount').textContent = interstitialCount;
-          startCooldown(120); // 2-minute cooldown
+          startCooldown(180); // 3-minute cooldown
         }).catch(error => {
           alert('Failed to show interstitial ad.');
           console.error('Ad error:', error);
@@ -121,22 +118,6 @@
     function updateCooldownText() {
       document.getElementById('cooldownTimer').textContent =
         "Next ad available in " + cooldownSeconds + "s";
-    }
-
-    function startAutoAds() {
-      if (autoAdsInterval) return; // already running
-      autoAdsInterval = setInterval(() => {
-        if (!document.getElementById('interstitialBtn').disabled) {
-          showInterstitialAd();
-        }
-      }, 60000); // every 1 min
-      alert('Auto ads started (every 1 min).');
-    }
-
-    function stopAutoAds() {
-      clearInterval(autoAdsInterval);
-      autoAdsInterval = null;
-      alert('Auto ads stopped.');
     }
   </script>
 </body>
