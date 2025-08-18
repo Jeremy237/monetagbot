@@ -59,10 +59,12 @@
       margin-top: 20px;
       font-size: 1.2rem;
     }
-    .cooldown {
-      margin-top: 10px;
+    .country-log {
+      margin-top: 15px;
       font-size: 1rem;
-      color: #ff8080;
+      color: #90ee90;
+      text-align: left;
+      width: 100%;
     }
   </style>
 </head>
@@ -77,7 +79,8 @@
       Interstitial Ads Watched: <span id="interstitialCount">0</span><br>
       Popup Ads Watched: <span id="popupCount">0</span>
     </div>
-    <div id="cooldownTimer" class="cooldown"></div>
+
+    <div id="countryLog" class="country-log"></div>
   </div>
 
   <script>
@@ -85,39 +88,32 @@
     let interstitialCount = 0;
     let popupCount = 0;
 
-    // === Cooldown handling ===
-    let cooldownTimeout = null;
-    let cooldownSeconds = 0;
-
-    function startCooldown(seconds, btnId) {
-      const btn = document.getElementById(btnId);
-      cooldownSeconds = seconds;
-      btn.disabled = true;
-
-      updateCooldownText();
-      cooldownTimeout = setInterval(() => {
-        cooldownSeconds--;
-        updateCooldownText();
-        if (cooldownSeconds <= 0) {
-          clearInterval(cooldownTimeout);
-          btn.disabled = false;
-          document.getElementById('cooldownTimer').textContent = "";
-        }
-      }, 1000);
+    // === Detect Country ===
+    async function getCountry() {
+      try {
+        const res = await fetch("https://ipapi.co/json/"); 
+        const data = await res.json();
+        return data.country_name || "Unknown";
+      } catch (e) {
+        console.error("Geo lookup failed:", e);
+        return "Unknown";
+      }
     }
 
-    function updateCooldownText() {
-      document.getElementById('cooldownTimer').textContent =
-        "Next ad available in " + cooldownSeconds + "s";
+    async function logCountry(action) {
+      const country = await getCountry();
+      const logDiv = document.getElementById("countryLog");
+      const time = new Date().toLocaleTimeString();
+      logDiv.innerHTML += `[${time}] ${action} pressed from ${country}<br>`;
     }
 
     // === Show Interstitial Ad ===
-    function showInterstitialAd() {
+    async function showInterstitialAd() {
       if (typeof show_9734242 === 'function') {
-        show_9734242().then(() => {
+        show_9734242().then(async () => {
           interstitialCount++;
           document.getElementById('interstitialCount').textContent = interstitialCount;
-          startCooldown(180, 'interstitialBtn'); // 3-min cooldown
+          await logCountry("Interstitial");
           alert('You watched a Rewarded Interstitial ad!');
         }).catch(error => {
           alert('Failed to show interstitial ad.');
@@ -129,11 +125,12 @@
     }
 
     // === Show Popup Ad ===
-    function showPopupAd() {
+    async function showPopupAd() {
       if (typeof show_9734242 === 'function') {
-        show_9734242('pop').then(() => {
+        show_9734242('pop').then(async () => {
           popupCount++;
           document.getElementById('popupCount').textContent = popupCount;
+          await logCountry("Popup");
           alert('You watched a Rewarded Popup ad!');
         }).catch(error => {
           alert('Failed to show popup ad.');
