@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reward Ads</title>
 
-  <!-- Your ad script -->
   <script src='//libtl.com/sdk.js' data-zone='9734242' data-sdk='show_9734242'></script>
 
   <style>
@@ -33,10 +32,6 @@
       margin: auto;
       box-sizing: border-box;
     }
-    .ad-container h1 {
-      margin-bottom: 20px;
-      font-size: 1.6rem;
-    }
     .reward-button {
       padding: 15px 30px;
       font-size: 18px;
@@ -59,12 +54,15 @@
       margin-top: 20px;
       font-size: 1.2rem;
     }
-    .country-log {
+    .cooldown {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: #ff8080;
+    }
+    #countryDisplay {
       margin-top: 15px;
       font-size: 1rem;
-      color: #90ee90;
-      text-align: left;
-      width: 100%;
+      color: #00ffcc;
     }
   </style>
 </head>
@@ -79,8 +77,8 @@
       Interstitial Ads Watched: <span id="interstitialCount">0</span><br>
       Popup Ads Watched: <span id="popupCount">0</span>
     </div>
-
-    <div id="countryLog" class="country-log"></div>
+    <div id="cooldownTimer" class="cooldown"></div>
+    <div id="countryDisplay"></div>
   </div>
 
   <script>
@@ -88,33 +86,55 @@
     let interstitialCount = 0;
     let popupCount = 0;
 
-    // === Detect Country ===
-    async function getCountry() {
-      try {
-        const res = await fetch("https://ipapi.co/json/"); 
-        const data = await res.json();
-        return data.country_name || "Unknown";
-      } catch (e) {
-        console.error("Geo lookup failed:", e);
-        return "Unknown";
-      }
+    // === Cooldown handling ===
+    let cooldownTimeout = null;
+    let cooldownSeconds = 0;
+
+    function startCooldown(seconds, btnId) {
+      const btn = document.getElementById(btnId);
+      cooldownSeconds = seconds;
+      btn.disabled = true;
+
+      updateCooldownText();
+      cooldownTimeout = setInterval(() => {
+        cooldownSeconds--;
+        updateCooldownText();
+        if (cooldownSeconds <= 0) {
+          clearInterval(cooldownTimeout);
+          btn.disabled = false;
+          document.getElementById('cooldownTimer').textContent = "";
+        }
+      }, 1000);
     }
 
-    async function logCountry(action) {
-      const country = await getCountry();
-      const logDiv = document.getElementById("countryLog");
-      const time = new Date().toLocaleTimeString();
-      logDiv.innerHTML += `[${time}] ${action} pressed from ${country}<br>`;
+    function updateCooldownText() {
+      document.getElementById('cooldownTimer').textContent =
+        "Next ad available in " + cooldownSeconds + "s";
+    }
+
+    // === Fetch and show country ===
+    function showCountry() {
+      fetch("https://ipapi.co/json/")
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("countryDisplay").textContent =
+            "You clicked from: " + data.country_name;
+        })
+        .catch(() => {
+          document.getElementById("countryDisplay").textContent =
+            "Could not detect country.";
+        });
     }
 
     // === Show Interstitial Ad ===
-    async function showInterstitialAd() {
+    function showInterstitialAd() {
       if (typeof show_9734242 === 'function') {
-        show_9734242().then(async () => {
+        show_9734242().then(() => {
           interstitialCount++;
           document.getElementById('interstitialCount').textContent = interstitialCount;
-          await logCountry("Interstitial");
+          startCooldown(180, 'interstitialBtn'); // 3-min cooldown
           alert('You watched a Rewarded Interstitial ad!');
+          showCountry();
         }).catch(error => {
           alert('Failed to show interstitial ad.');
           console.error('Ad error:', error);
@@ -125,13 +145,13 @@
     }
 
     // === Show Popup Ad ===
-    async function showPopupAd() {
+    function showPopupAd() {
       if (typeof show_9734242 === 'function') {
-        show_9734242('pop').then(async () => {
+        show_9734242('pop').then(() => {
           popupCount++;
           document.getElementById('popupCount').textContent = popupCount;
-          await logCountry("Popup");
           alert('You watched a Rewarded Popup ad!');
+          showCountry();
         }).catch(error => {
           alert('Failed to show popup ad.');
           console.error('Ad error:', error);
