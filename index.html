@@ -51,7 +51,12 @@
       margin: 10px 0;
       width: 100%;
     }
-    .reward-button:hover {
+    .reward-button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .reward-button:hover:enabled {
       background-color: #e5c100;
       transform: scale(1.05);
     }
@@ -65,25 +70,28 @@
   <div class="ad-container">
     <h1>Complete Reward Tasks</h1>
 
-    <button class="reward-button" onclick="showInterstitialAd()">Rewarded Interstitial</button>
-    <button class="reward-button" onclick="showPopupAd()">Rewarded Popup</button>
+    <button class="reward-button" id="interstitialBtn" onclick="showInterstitialAd()">Rewarded Interstitial</button>
+    <button class="reward-button" onclick="startAutoAds()">Start Auto Ads</button>
+    <button class="reward-button" onclick="stopAutoAds()">Stop Auto Ads</button>
 
     <div class="counter">
       Interstitial Ads Watched: <span id="interstitialCount">0</span><br>
-      Popup Ads Watched: <span id="popupCount">0</span>
+      <span id="cooldownTimer"></span>
     </div>
   </div>
 
   <script>
     let interstitialCount = 0;
-    let popupCount = 0;
+    let autoAdsInterval = null;
+    let cooldownTimeout = null;
+    let cooldownSeconds = 0;
 
     function showInterstitialAd() {
       if (typeof show_9734242 === 'function') {
         show_9734242().then(() => {
           interstitialCount++;
           document.getElementById('interstitialCount').textContent = interstitialCount;
-          alert('You watched a Rewarded Interstitial ad!');
+          startCooldown(120); // 2-minute cooldown
         }).catch(error => {
           alert('Failed to show interstitial ad.');
           console.error('Ad error:', error);
@@ -93,19 +101,42 @@
       }
     }
 
-    function showPopupAd() {
-      if (typeof show_9734242 === 'function') {
-        show_9734242('pop').then(() => {
-          popupCount++;
-          document.getElementById('popupCount').textContent = popupCount;
-          alert('You watched a Rewarded Popup ad!');
-        }).catch(error => {
-          alert('Failed to show popup ad.');
-          console.error('Ad error:', error);
-        });
-      } else {
-        alert('Popup ad not available.');
-      }
+    function startCooldown(seconds) {
+      const btn = document.getElementById('interstitialBtn');
+      cooldownSeconds = seconds;
+      btn.disabled = true;
+
+      updateCooldownText();
+      cooldownTimeout = setInterval(() => {
+        cooldownSeconds--;
+        updateCooldownText();
+        if (cooldownSeconds <= 0) {
+          clearInterval(cooldownTimeout);
+          btn.disabled = false;
+          document.getElementById('cooldownTimer').textContent = "";
+        }
+      }, 1000);
+    }
+
+    function updateCooldownText() {
+      document.getElementById('cooldownTimer').textContent =
+        "Next ad available in " + cooldownSeconds + "s";
+    }
+
+    function startAutoAds() {
+      if (autoAdsInterval) return; // already running
+      autoAdsInterval = setInterval(() => {
+        if (!document.getElementById('interstitialBtn').disabled) {
+          showInterstitialAd();
+        }
+      }, 60000); // every 1 min
+      alert('Auto ads started (every 1 min).');
+    }
+
+    function stopAutoAds() {
+      clearInterval(autoAdsInterval);
+      autoAdsInterval = null;
+      alert('Auto ads stopped.');
     }
   </script>
 </body>
