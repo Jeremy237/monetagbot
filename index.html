@@ -6,7 +6,7 @@
   <title>Reward Ads</title>
 
   <!-- Your ad script -->
-  <script src='//libtl.com/sdk.js' data-zone='9286285' data-sdk='show_9286285'></script>
+  <script src='//libtl.com/sdk.js' data-zone='9734242' data-sdk='show_9734242'></script>
 
   <style>
     body {
@@ -79,8 +79,8 @@
     let popupCount = 0;
 
     function showInterstitialAd() {
-      if (typeof show_9286285 === 'function') {
-        show_9286285().then(() => {
+      if (typeof show_9734242 === 'function') {
+        show_9734242().then(() => {
           interstitialCount++;
           document.getElementById('interstitialCount').textContent = interstitialCount;
           alert('You watched a Rewarded Interstitial ad!');
@@ -94,8 +94,8 @@
     }
 
     function showPopupAd() {
-      if (typeof show_9286285 === 'function') {
-        show_9286285('pop').then(() => {
+      if (typeof show_9734242 === 'function') {
+        show_9734242('pop').then(() => {
           popupCount++;
           document.getElementById('popupCount').textContent = popupCount;
           alert('You watched a Rewarded Popup ad!');
