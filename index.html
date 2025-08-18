@@ -51,12 +51,7 @@
       margin: 10px 0;
       width: 100%;
     }
-    .reward-button:disabled {
-      background-color: #aaa;
-      cursor: not-allowed;
-      transform: none;
-    }
-    .reward-button:hover:enabled {
+    .reward-button:hover {
       background-color: #e5c100;
       transform: scale(1.05);
     }
@@ -64,42 +59,61 @@
       margin-top: 20px;
       font-size: 1.2rem;
     }
+    .cooldown {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: #ff8080;
+    }
   </style>
 </head>
 <body>
   <div class="ad-container">
     <h1>Complete Reward Tasks</h1>
 
-    <button class="reward-button" id="interstitialBtn" onclick="showInterstitialAd()">Rewarded Interstitial</button>
+    <button id="interstitialBtn" class="reward-button" onclick="showInterstitialAd()">Rewarded Interstitial</button>
+    <button id="popupBtn" class="reward-button" onclick="showPopupAd()">Rewarded Popup</button>
 
     <div class="counter">
       Interstitial Ads Watched: <span id="interstitialCount">0</span><br>
-      <span id="cooldownTimer"></span>
+      Popup Ads Watched: <span id="popupCount">0</span>
     </div>
+    <div id="cooldownTimer" class="cooldown"></div>
   </div>
 
   <script>
+    // === User-Agent pool ===
+    const userAgents = [
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0",
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 Safari/605.1",
+      "Mozilla/5.0 (Linux; Android 13; Pixel 7 Pro) AppleWebKit/537.36 Chrome/118.0",
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_2_1) AppleWebKit/605.1.15 Safari/605.1"
+    ];
+
+    let lastUA = "";
+
+    function setRandomUA() {
+      let randomUA;
+      do {
+        randomUA = userAgents[Math.floor(Math.random() * userAgents.length)];
+      } while (randomUA === lastUA); // avoid repeating last UA
+      lastUA = randomUA;
+
+      Object.defineProperty(navigator, 'userAgent', {
+        get: function () { return randomUA; }
+      });
+      console.log("UA switched to:", randomUA);
+    }
+
+    // === Counters ===
     let interstitialCount = 0;
+    let popupCount = 0;
+
+    // === Cooldown handling ===
     let cooldownTimeout = null;
     let cooldownSeconds = 0;
 
-    function showInterstitialAd() {
-      if (typeof show_9734242 === 'function') {
-        show_9734242().then(() => {
-          interstitialCount++;
-          document.getElementById('interstitialCount').textContent = interstitialCount;
-          startCooldown(180); // 3-minute cooldown
-        }).catch(error => {
-          alert('Failed to show interstitial ad.');
-          console.error('Ad error:', error);
-        });
-      } else {
-        alert('Interstitial ad not available.');
-      }
-    }
-
-    function startCooldown(seconds) {
-      const btn = document.getElementById('interstitialBtn');
+    function startCooldown(seconds, btnId) {
+      const btn = document.getElementById(btnId);
       cooldownSeconds = seconds;
       btn.disabled = true;
 
@@ -118,6 +132,41 @@
     function updateCooldownText() {
       document.getElementById('cooldownTimer').textContent =
         "Next ad available in " + cooldownSeconds + "s";
+    }
+
+    // === Show Interstitial Ad ===
+    function showInterstitialAd() {
+      setRandomUA(); // rotate UA before showing ad
+      if (typeof show_9734242 === 'function') {
+        show_9734242().then(() => {
+          interstitialCount++;
+          document.getElementById('interstitialCount').textContent = interstitialCount;
+          startCooldown(180, 'interstitialBtn'); // 3-min cooldown
+          alert('You watched a Rewarded Interstitial ad!');
+        }).catch(error => {
+          alert('Failed to show interstitial ad.');
+          console.error('Ad error:', error);
+        });
+      } else {
+        alert('Interstitial ad not available.');
+      }
+    }
+
+    // === Show Popup Ad ===
+    function showPopupAd() {
+      setRandomUA(); // rotate UA before showing ad
+      if (typeof show_9734242 === 'function') {
+        show_9734242('pop').then(() => {
+          popupCount++;
+          document.getElementById('popupCount').textContent = popupCount;
+          alert('You watched a Rewarded Popup ad!');
+        }).catch(error => {
+          alert('Failed to show popup ad.');
+          console.error('Ad error:', error);
+        });
+      } else {
+        alert('Popup ad not available.');
+      }
     }
   </script>
 </body>
