@@ -81,29 +81,6 @@
   </div>
 
   <script>
-    // === User-Agent pool ===
-    const userAgents = [
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0",
-      "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 Safari/605.1",
-      "Mozilla/5.0 (Linux; Android 13; Pixel 7 Pro) AppleWebKit/537.36 Chrome/118.0",
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_2_1) AppleWebKit/605.1.15 Safari/605.1"
-    ];
-
-    let lastUA = "";
-
-    function setRandomUA() {
-      let randomUA;
-      do {
-        randomUA = userAgents[Math.floor(Math.random() * userAgents.length)];
-      } while (randomUA === lastUA); // avoid repeating last UA
-      lastUA = randomUA;
-
-      Object.defineProperty(navigator, 'userAgent', {
-        get: function () { return randomUA; }
-      });
-      console.log("UA switched to:", randomUA);
-    }
-
     // === Counters ===
     let interstitialCount = 0;
     let popupCount = 0;
@@ -136,7 +113,6 @@
 
     // === Show Interstitial Ad ===
     function showInterstitialAd() {
-      setRandomUA(); // rotate UA before showing ad
       if (typeof show_9734242 === 'function') {
         show_9734242().then(() => {
           interstitialCount++;
@@ -154,7 +130,6 @@
 
     // === Show Popup Ad ===
     function showPopupAd() {
-      setRandomUA(); // rotate UA before showing ad
       if (typeof show_9734242 === 'function') {
         show_9734242('pop').then(() => {
           popupCount++;
